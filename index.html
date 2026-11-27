@@ -682,6 +682,10 @@ body.editing .chip.overfull .n { background: #f0a08c; }
 @keyframes fix81 { from { transform: rotate(14deg); } to { transform: rotate(0); } }
 @media (prefers-reduced-motion: reduce) { .sign81.crooked { animation: none; transform: rotate(14deg); } .sign81.fix { animation: none; } }
 
+/* Secret organiser entrance while the doors are locked */
+.adminform { width: min(380px, 100%); margin-top: 4px; }
+#lock-lbl { user-select: none; -webkit-user-select: none; }
+
 @media (max-width: 720px) { .toast { bottom: calc(50% + 10px); } }
 
 @media (max-width: 720px) {
@@ -789,6 +793,10 @@ body.editing .chip.overfull .n { background: #f0a08c; }
     <div class="row coderow">
       <label for="code-new" class="status">Nytt kodord till dörren</label>
       <input class="field" id="code-new" type="text" placeholder="Tomt = behåll nuvarande" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="row coderow">
+      <label for="admin-new" class="status">Nytt administratörslösenord</label>
+      <input class="field" id="admin-new" type="password" placeholder="Tomt = behåll nuvarande" autocomplete="new-password" spellcheck="false">
     </div>
     <div class="row">
       <button class="btn" type="button" id="edit-close">Avsluta</button>
@@ -1074,10 +1082,14 @@ body.editing .chip.overfull .n { background: #f0a08c; }
       <button type="button" class="glink" id="g-anon">Gå in utan att skriva namn</button>
     </form>
     <div class="lockbox" id="lockbox" hidden>
-      <p class="lbl">Dörrarna öppnar</p>
+      <p class="lbl" id="lock-lbl">Dörrarna öppnar</p>
       <p class="lockwhen">Fredag 4 december kl. 18.00</p>
       <p class="lockcount" id="lockcount" aria-live="polite"></p>
       <button class="btn" id="admin-in" type="button" hidden>Gå in som administratör</button>
+      <form class="grow adminform" id="adminform" hidden autocomplete="off" novalidate>
+        <input id="adminpw" class="gfield" type="password" placeholder="Administratörslösenord" autocomplete="current-password" aria-label="Administratörslösenord">
+        <button class="ibtn" type="submit" id="adminbtn">Gå in</button>
+      </form>
     </div>
   </section>
 
@@ -1218,7 +1230,7 @@ body.editing .chip.overfull .n { background: #f0a08c; }
 </div>
 </div>
 
-<script type="application/json" id="state">{"agenda":[{"time":"18:00","text":"Dörrarna öppnar – välkomstdrink och mingel"},{"time":"19:30","text":"Gäster till bords"},{"time":"20:00","text":"Middag och prisutdelning"},{"time":"22:30","text":"Club Consid"},{"time":"01:00","text":"Tack för i kväll"}],"menu":{"courses":[{"label":"Förrätt","dish":"Hummersallad med hyvlad fänkål, gräslöksmajonnäs, forellrom och rågcrumble"},{"label":"Varmrätt","dish":"Kryddbakad hjortfilé med potatisterrine, grönkålssallad, rostad morot och rödvinssås med enbär"},{"label":"Dessert","dish":"Vit chokladmousse med rårörda hjortron, hjortronkräm och havrecrumble"}],"drinks":"Välkomstdrink, tre glas vin eller öl till middagen samt kaffe. Alkoholfria alternativ finns."},"vault":{"v":1,"salt":"ReBszDfroeDKvWOGobH72A==","iv":"3PPh9GrcJ7UkQa3O","ct":"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"},"songUrl":"https://open.spotify.com/playlist/1Qur6Y7GWfJ2tnYJNYukdS?si=WmYF8_nkTTyS239PTL4KIg&utm_source=copy-link&pt=a19bcf4333c1534864e69878c42e63c9&pi=US495RBrRSmw3"}</script>
+<script type="application/json" id="state">{"agenda":[{"time":"18:00","text":"Dörrarna öppnar – välkomstdrink och mingel"},{"time":"19:30","text":"Gäster till bords"},{"time":"20:00","text":"Middag och prisutdelning"},{"time":"22:30","text":"Club Consid"},{"time":"01:00","text":"Tack för i kväll"}],"menu":{"courses":[{"label":"Förrätt","dish":"Hummersallad med hyvlad fänkål, gräslöksmajonnäs, forellrom och rågcrumble"},{"label":"Varmrätt","dish":"Kryddbakad hjortfilé med potatisterrine, grönkålssallad, rostad morot och rödvinssås med enbär"},{"label":"Dessert","dish":"Vit chokladmousse med rårörda hjortron, hjortronkräm och havrecrumble"}],"drinks":"Välkomstdrink, tre glas vin eller öl till middagen samt kaffe. Alkoholfria alternativ finns."},"vault":{"v":1,"salt":"ReBszDfroeDKvWOGobH72A==","iv":"3PPh9GrcJ7UkQa3O","ct":"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"},"songUrl":"https://open.spotify.com/playlist/1Qur6Y7GWfJ2tnYJNYukdS?si=WmYF8_nkTTyS239PTL4KIg&utm_source=copy-link&pt=a19bcf4333c1534864e69878c42e63c9&pi=US495RBrRSmw3","adminHash":{"salt":"ivo9YUM6l63UevcKt7LNSA==","hash":"SrxAz9c/DllEPdZdKa0I3BJC2JxNYOR6QcWJE+0ACb8="}}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -1268,6 +1280,14 @@ body.editing .chip.overfull .n { background: #f0a08c; }
       return Array.isArray(data) ? data : null;
     } catch (e) { return null; }
   }
+  // Organisers can pass the time lock with a separate admin password. Only a PBKDF2 digest is stored.
+  let NEWADMIN = null;
+  async function adminDigest(pw, saltB64) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(pw).trim()), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64.dec(saltB64), iterations: 150000, hash: 'SHA-256' }, base, 256);
+    return b64.enc(bits);
+  }
+  async function makeAdminHash(pw) { const salt = b64.enc(crypto.getRandomValues(new Uint8Array(16))); return { salt, hash: await adminDigest(pw, salt) }; }
   async function sealVault(guestsList, code) {
     const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
     const key = await deriveKey(code, salt);
@@ -1794,7 +1814,7 @@ body.editing .chip.overfull .n { background: #f0a08c; }
 
   /* Editing */
   function setStatus(text, cls) { const s = $('edit-status'); s.textContent = text; s.className = 'status' + (cls ? ' ' + cls : ''); }
-  function isDirty() { return JSON.stringify(STATE) !== SAVED || (!!NEWCODE && normCode(NEWCODE) !== CODE); }
+  function isDirty() { return JSON.stringify(STATE) !== SAVED || (!!NEWCODE && normCode(NEWCODE) !== CODE) || !!NEWADMIN; }
   function changed() {
     const d = isDirty();
     setStatus(d ? 'Osparade ändringar' : 'Inga osparade ändringar', d ? 'dirty' : '');
@@ -1841,11 +1861,18 @@ body.editing .chip.overfull .n { background: #f0a08c; }
     setEditing(false);
   });
   $('edit-discard').addEventListener('click', () => {
-    STATE = JSON.parse(SAVED); NEWCODE = null; $('code-new').value = '';
+    STATE = JSON.parse(SAVED); NEWCODE = null; $('code-new').value = ''; NEWADMIN = null; $('admin-new').value = '';
     if (selectedName && !STATE.guests.some(x => x.n === selectedName)) clearGuest();
     refreshAll(); renderAgenda(); renderMenu(); renderSongs(); changed();
   });
   $('edit-save').addEventListener('click', save);
+  $('admin-new').addEventListener('input', e => {
+    const v = e.target.value.trim();
+    NEWADMIN = v.length >= 8 ? v : null;
+    changed();
+    if (v && v.length < 8) setStatus('Administratörslösenordet behöver minst åtta tecken.', 'err');
+    else if (NEWADMIN) setStatus('Nytt administratörslösenord sparas när du klickar på Spara för alla.', 'dirty');
+  });
   $('code-new').addEventListener('input', e => {
     const v = e.target.value.trim();
     NEWCODE = v.length >= 4 ? v : null;
@@ -1877,8 +1904,10 @@ body.editing .chip.overfull .n { background: #f0a08c; }
     if (!CODE) { setStatus('Lås upp gästlistan med kodordet innan du sparar.', 'err'); btn.disabled = false; return; }
     STATE.agenda = STATE.agenda.filter(a => a.time.trim() || a.text.trim());
     STATE.menu.courses = STATE.menu.courses.filter(c => c.label.trim() || c.dish.trim());
+    if (NEWADMIN) STATE.adminHash = await makeAdminHash(NEWADMIN);
     try {
       await art.publish(await buildDoc());
+      if (NEWADMIN) { NEWADMIN = null; $('admin-new').value = ''; try { localStorage.setItem('ca26-admin', STATE.adminHash.hash); } catch (e) { /* private mode */ } }
       if (NEWCODE) { CODE = normCode(NEWCODE); NEWCODE = null; $('code-new').value = ''; try { localStorage.setItem('ca26-code', CODE); } catch (e) { /* private mode */ } }
       SAVED = JSON.stringify(STATE);
       setStatus('Sparat. Alla som har sidan öppen ser nu den nya versionen.');
@@ -2560,6 +2589,7 @@ body.editing .chip.overfull .n { background: #f0a08c; }
        Administrators (people who can edit the page) may enter early. */
     const OPEN_AT = Date.UTC(2026, 11, 4, 17, 0, 0);
     let adminPass = false;
+    try { adminPass = !!(STATE.adminHash && localStorage.getItem('ca26-admin') === STATE.adminHash.hash); } catch (e) { adminPass = false; }
     const isLocked = () => !adminPass && Date.now() < OPEN_AT;
     function renderLock() {
       const lb = $('lockbox');
@@ -2589,6 +2619,32 @@ body.editing .chip.overfull .n { background: #f0a08c; }
     onAdmin = () => { if (isLocked()) $('admin-in').hidden = false; };
     if (canEditPage) onAdmin();
     $('admin-in').addEventListener('click', () => { adminPass = true; renderLock(); });
+    /* Five quick clicks on "Dörrarna öppnar" reveal the organisers' password field */
+    let lockClicks = [];
+    $('lock-lbl').addEventListener('click', () => {
+      const now = Date.now(); lockClicks = lockClicks.filter(t => now - t < 4000); lockClicks.push(now);
+      if (lockClicks.length < 5) return;
+      lockClicks = [];
+      $('adminform').hidden = false; hosts('lean');
+      sayA('Psst… är du från arrangörerna?');
+      $('adminpw').focus({ preventScroll: true });
+    });
+    $('adminform').addEventListener('submit', async e => {
+      e.preventDefault();
+      const v = $('adminpw').value;
+      if (!v.trim() || !STATE.adminHash) return;
+      $('adminbtn').disabled = true;
+      let ok = false;
+      try { ok = (await adminDigest(v, STATE.adminHash.salt)) === STATE.adminHash.hash; } catch (err) { ok = false; }
+      $('adminbtn').disabled = false;
+      if (!ok) { hosts('shake', 900); sayA('Nej, du står inte på arrangörslistan.'); $('adminpw').select(); return; }
+      try { localStorage.setItem('ca26-admin', STATE.adminHash.hash); } catch (err) { /* private mode */ }
+      $('adminpw').value = ''; $('adminform').hidden = true;
+      hosts('nod', 1000);
+      adminPass = true;
+      renderLock();
+      sayA(needCode() ? 'Välkommen, administratör! Psst… och gästernas lösenord?' : 'Välkommen in, administratör!');
+    });
     $('glist').addEventListener('submit', e => { if (isLocked()) e.stopImmediatePropagation(); }, true);
 
     /* Leave the party: back out to the street, doors closed */
